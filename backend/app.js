@@ -17,10 +17,14 @@ app.use(cookieParser());
 import authRoutes from './routes/auth.routes.js';
 import componentRoutes from './routes/component.routes.js';
 import userRoutes from './routes/user.routes.js';
+import partnerRoutes from './routes/partner.routes.js';
+import configurationRoutes from './routes/configuration.routes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/components', componentRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/partners', partnerRoutes);
+app.use('/config', configurationRoutes);
 
 //  Route 404
 app.use((req, res, next) => {
