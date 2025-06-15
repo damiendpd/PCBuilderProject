@@ -18,18 +18,18 @@ const generateToken = (user) => {
 // Inscription
 router.post('/register', async (req, res) => {
     try {
-      const { email, password } = req.body;  // enlever username
+      const { email, password } = req.body;  
   
       const exists = await User.findOne({ email });
       if (exists) return res.status(400).json({ message: 'Email déjà utilisé' });
   
-      const user = new User({ email, password });  // pas username
+      const user = new User({ email, password });  
       await user.save();
   
       const token = generateToken(user);
       res.status(201).json({ token, user: { id: user._id, email } });
     } catch (err) {
-      console.error(err);  // Ajoute ceci pour voir l'erreur dans la console
+      console.error(err);  
       res.status(500).json({ message: 'Erreur serveur' });
     }
   });
