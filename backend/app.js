@@ -25,8 +25,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/components', componentRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/partners', partnerRoutes);
-app.use('/config', configurationRoutes);
-app.use('/api/saved-configs', savedConfigRoutes);
+app.use('/api/configurations', savedConfigRoutes); 
 
 //  Route 404
 app.use((req, res, next) => {

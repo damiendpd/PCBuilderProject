@@ -107,7 +107,7 @@ router.delete('/:componentId/offers/:offerId', verifyToken, isAdmin, async (req,
     const offer = component.offers.id(req.params.offerId);
     if (!offer) return res.status(404).json({ message: 'Offre non trouvée' });
 
-    offer.remove(); // Supprime l'offre
+    offer.remove(); 
     await component.save();
 
     res.status(200).json({ message: 'Offre supprimée avec succès' });

@@ -1,4 +1,3 @@
-// routes/partner.routes.js
 import express from 'express';
 import Partner from '../models/Partner.js';
 import { verifyToken, isAdmin } from '../middleware/auth.js';

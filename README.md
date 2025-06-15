@@ -1,18 +1,16 @@
 # 🖥️ PCBuilderProject
 
-**PCBuilderProject** est une API RESTful accompagnée d'un backoffice React permettant de configurer un PC sur mesure. Elle offre la possibilité aux utilisateurs de sélectionner des composants, calculer le coût total, sauvegarder leurs configurations, et bien plus encore. Les administrateurs disposent d'une interface de gestion complète des composants, partenaires et utilisateurs.
-
+API RESTful pour gérer les composants, partenaires, utilisateurs et configurations personnalisées de PC sur mesure.
 ---
 
 ## 🚀 Technologies utilisées
 
 ### Backend (API)
-- **Node.js**
-- **Express.js**
-- **MongoDB + Mongoose**
-- **JWT** (authentification)
-- **Jest + Supertest** (tests)
-- **OpenAPI / Swagger** (documentation)
+Node.js + Express
+MongoDB avec Mongoose
+Authentification JWT
+Tests avec Jest & Supertest
+Documentation API via Swagger (OpenAPI)
 
 ### Frontend (BackOffice)
 - **React**
@@ -27,16 +25,16 @@
 ## 📁 Arborescence du projet
 
 PCBuilderProject/
-├── backend/
-│ ├── controllers/
-│ ├── models/
-│ ├── routes/
-│ ├── middlewares/
-│ ├── utils/
-│ ├── tests/
-│ ├── app.js
-│ ├── server.js
-│ └── swagger.yaml
+    backend/
+    ├── models/
+    ├── routes/
+    ├── middlewares/
+    ├── tests/
+    ├── app.js
+    ├── server.js
+    ├── babel.config.js
+    ├── jest.config.js
+
 ├── frontend/
 │ ├── public/
 │ ├── src/
@@ -54,40 +52,23 @@ PCBuilderProject/
 
 ## ⚙️ Fonctionnalités
 
-### Utilisateurs
-- Inscription, connexion, authentification via JWT
-- Sauvegarde de configurations personnalisées
-- Gestion de plusieurs builds
+Gestion des utilisateurs (inscription, connexion, rôles admin)
 
-### Composants
-- Liste de catégories (CPU, GPU, RAM, etc.)
-- Composants par catégorie, marque, prix
-- CRUD complet pour les administrateurs
+CRUD complet sur composants et partenaires
 
-### Partenaires marchands
-- Ajout, mise à jour, suppression
-- Prix multiples pour un composant donné
-- Calcul du coût total
+Sauvegarde et gestion des configurations PC personnalisées
 
-### Génération de configuration
-- Détail des composants sélectionnés
-- Exportation en PDF
+Auth sécurisée avec JWT
 
-### Sécurité & Authentification
-- Auth sécurisée par JWT
-- Déconnexion automatique en cas de token expiré ou 401
-- Intercepteurs Axios
+Documentation API interactive (Swagger)
 
 ---
 
 ## 🔒 Authentification JWT
 
-L’authentification est gérée avec des **JSON Web Tokens** :
+JWT délivré à la connexion
 
-- Les utilisateurs reçoivent un token à la connexion.
-- Ce token est stocké localement et envoyé avec chaque requête API.
-- Un intercepteur gère automatiquement la déconnexion si le token est expiré.
-
+Token à inclure dans l'en-tête Authorization: Bearer <token> pour accéder aux routes protégées
 ---
 
 ## 🧪 Tests
@@ -97,15 +78,12 @@ L’authentification est gérée avec des **JSON Web Tokens** :
 cd backend
 npm run test
 
-## Documentation API
-# Lancer le backend et accéder à : http://localhost:5000/api-docs
-
-
 ▶️ Lancer le projet
 Backend
     cd backend
     npm install
     npm run dev
+    ## API accessible sur http://localhost:5000
 Frontend (BackOffice)
     cd frontend
     npm install

@@ -1,0 +1,707 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Backend - Documentation complète",
+    "version": "1.0.0",
+    "description": "Documentation complète de l'API backend pour la gestion des utilisateurs, composants, partenaires et configurations sauvegardées."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Serveur local"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Inscription utilisateur",
+        "tags": ["Auth"],
+        "requestBody": {
+          "description": "Email et mot de passe pour l'inscription",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserRegister" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponse" }
+              }
+            }
+          },
+          "400": { "description": "Email déjà utilisé" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Connexion utilisateur",
+        "tags": ["Auth"],
+        "requestBody": {
+          "description": "Email et mot de passe pour la connexion",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserLogin" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connexion réussie",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponseWithUsername" }
+              }
+            }
+          },
+          "401": { "description": "Identifiants invalides" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "summary": "Récupérer les infos de l'utilisateur connecté",
+        "tags": ["User"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Infos utilisateur",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          },
+          "404": { "description": "Utilisateur non trouvé" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+    "/users/admin-only": {
+      "get": {
+        "summary": "Route accessible uniquement aux admins",
+        "tags": ["User"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Accès réservé aux administrateurs" },
+          "403": { "description": "Accès refusé" }
+        }
+      }
+    },
+    "/components": {
+      "get": {
+        "summary": "Lister tous les composants",
+        "tags": ["Component"],
+        "responses": {
+          "200": {
+            "description": "Liste des composants",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Component" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Erreur serveur" }
+        }
+      },
+      "post": {
+        "summary": "Créer un nouveau composant (admin seulement)",
+        "tags": ["Component"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "description": "Données du composant à créer",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ComponentInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Composant créé",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Component" }
+              }
+            }
+          },
+          "400": { "description": "Erreur lors de la création" },
+          "401": { "description": "Non autorisé" },
+          "403": { "description": "Accès refusé" }
+        }
+      }
+    },
+    "/components/{id}": {
+      "get": {
+        "summary": "Récupérer un composant par son ID",
+        "tags": ["Component"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du composant",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Composant trouvé",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Component" }
+              }
+            }
+          },
+          "404": { "description": "Composant non trouvé" },
+          "500": { "description": "Erreur serveur" }
+        }
+      },
+      "put": {
+        "summary": "Mettre à jour un composant (admin seulement)",
+        "tags": ["Component"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du composant",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "description": "Données mises à jour du composant",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ComponentInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Composant mis à jour",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Component" }
+              }
+            }
+          },
+          "404": { "description": "Composant non trouvé" },
+          "400": { "description": "Erreur mise à jour" },
+          "401": { "description": "Non autorisé" },
+          "403": { "description": "Accès refusé" }
+        }
+      },
+      "delete": {
+        "summary": "Supprimer un composant (admin seulement)",
+        "tags": ["Component"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du composant",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Composant supprimé" },
+          "404": { "description": "Composant non trouvé" },
+          "401": { "description": "Non autorisé" },
+          "403": { "description": "Accès refusé" }
+        }
+      }
+    },
+    "/components/{id}/offers": {
+      "patch": {
+        "summary": "Ajouter une offre à un composant (admin seulement)",
+        "tags": ["Component"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du composant",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "description": "Données de l'offre à ajouter",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OfferInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Offre ajoutée" },
+          "400": { "description": "Erreur ajout offre" },
+          "401": { "description": "Non autorisé" },
+          "403": { "description": "Accès refusé" },
+          "404": { "description": "Composant non trouvé" }
+        }
+      }
+    },
+    "/components/{componentId}/offers/{offerId}": {
+      "put": {
+        "summary": "Mettre à jour une offre d’un composant (admin seulement)",
+        "tags": ["Component"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "componentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "offerId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "description": "Données de l'offre mises à jour",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OfferUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Offre mise à jour" },
+          "404": { "description": "Composant ou offre non trouvée" },
+          "401": { "description": "Non autorisé" },
+          "403": { "description": "Accès refusé" },
+          "500": { "description": "Erreur serveur" }
+        }
+      },
+      "delete": {
+        "summary": "Supprimer une offre d’un composant (admin seulement)",
+        "tags": ["Component"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "componentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "offerId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Offre supprimée" },
+          "404": { "description": "Composant ou offre non trouvée" },
+          "401": { "description": "Non autorisé" },
+          "403": { "description": "Accès refusé" }
+        }
+      }
+    },
+    "/partners": {
+      "get": {
+        "summary": "Lister tous les partenaires",
+        "tags": ["Partner"],
+        "responses": {
+          "200": {
+            "description": "Liste des partenaires",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Partner" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Créer un partenaire (admin seulement)",
+        "tags": ["Partner"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "description": "Données du partenaire",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PartnerInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Partenaire créé",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Partner" }
+              }
+            }
+          },
+          "401": { "description": "Non autorisé" },
+          "403": { "description": "Accès refusé" }
+        }
+      }
+    },
+    "/partners/{id}": {
+      "put": {
+        "summary": "Modifier un partenaire (admin seulement)",
+        "tags": ["Partner"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du partenaire",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "description": "Données mises à jour du partenaire",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PartnerInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Partenaire mis à jour",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Partner" }
+              }
+            }
+          },
+          "404": { "description": "Partenaire non trouvé" },
+          "401": { "description": "Non autorisé" },
+          "403": { "description": "Accès refusé" }
+        }
+      },
+      "delete": {
+        "summary": "Supprimer un partenaire (admin seulement)",
+        "tags": ["Partner"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du partenaire",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Partenaire supprimé" },
+          "404": { "description": "Partenaire non trouvé" },
+          "401": { "description": "Non autorisé" },
+          "403": { "description": "Accès refusé" }
+        }
+      }
+    },
+    "/saved-configurations": {
+      "get": {
+        "summary": "Lister toutes les configurations sauvegardées de l'utilisateur connecté",
+        "tags": ["SavedConfiguration"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Liste des configurations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SavedConfiguration" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Créer une configuration sauvegardée",
+        "tags": ["SavedConfiguration"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "description": "Nom et composants de la configuration",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SavedConfigurationInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Configuration créée",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SavedConfiguration" }
+              }
+            }
+          },
+          "400": { "description": "Erreur création" }
+        }
+      }
+    },
+    "/saved-configurations/{id}": {
+      "put": {
+        "summary": "Modifier une configuration sauvegardée",
+        "tags": ["SavedConfiguration"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la configuration",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "description": "Données mises à jour",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SavedConfigurationInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration mise à jour",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SavedConfiguration" }
+              }
+            }
+          },
+          "404": { "description": "Configuration non trouvée" }
+        }
+      },
+      "delete": {
+        "summary": "Supprimer une configuration sauvegardée",
+        "tags": ["SavedConfiguration"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la configuration",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Configuration supprimée" },
+          "404": { "description": "Configuration non trouvée" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserRegister": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "MotDePasse123!"
+          }
+        }
+      },
+      "UserLogin": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email", "example": "user@example.com" },
+          "password": { "type": "string", "format": "password", "example": "MotDePasse123!" }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string", "example": "jwt.token.here" },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string", "example": "64a8f3f...abc123" },
+              "email": { "type": "string", "format": "email", "example": "user@example.com" }
+            }
+          }
+        }
+      },
+      "AuthResponseWithUsername": {
+        "allOf": [
+          { "$ref": "#/components/schemas/AuthResponse" },
+          {
+            "properties": {
+              "username": { "type": "string", "example": "MonUtilisateur" }
+            }
+          }
+        ]
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "64a8f3f...abc123" },
+          "email": { "type": "string", "format": "email", "example": "user@example.com" },
+          "isAdmin": { "type": "boolean", "example": false }
+        }
+      },
+      "OfferInput": {
+        "type": "object",
+        "required": ["partner", "price"],
+        "properties": {
+          "partner": { "type": "string", "description": "ID du partenaire", "example": "64a9b2e...ef456" },
+          "price": { "type": "number", "example": 199.99 },
+          "url": { "type": "string", "format": "uri", "example": "https://example.com/offer" }
+        }
+      },
+      "OfferUpdate": {
+        "type": "object",
+        "properties": {
+          "partner": { "type": "string", "description": "ID du partenaire", "example": "64a9b2e...ef456" },
+          "price": { "type": "number", "example": 179.99 },
+          "url": { "type": "string", "format": "uri", "example": "https://example.com/offer" }
+        }
+      },
+      "Component": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "64a8d3c...xyz789" },
+          "name": { "type": "string", "example": "Intel Core i7-9700K" },
+          "type": { "type": "string", "enum": ["CPU", "GPU", "RAM", "Motherboard", "Storage", "PSU", "Case"], "example": "CPU" },
+          "brand": { "type": "string", "example": "Intel" },
+          "price": { "type": "number", "example": 329.99 },
+          "specs": {
+            "type": "object",
+            "example": { "frequency": "3.6 GHz", "cores": 8 }
+          },
+          "offers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OfferInput" }
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ComponentInput": {
+        "type": "object",
+        "required": ["name", "type", "price"],
+        "properties": {
+          "name": { "type": "string", "example": "AMD Ryzen 7 3700X" },
+          "type": {
+            "type": "string",
+            "enum": ["CPU", "GPU", "RAM", "Motherboard", "Storage", "PSU", "Case"],
+            "example": "CPU"
+          },
+          "brand": { "type": "string", "example": "AMD" },
+          "price": { "type": "number", "example": 299.99 },
+          "specs": { "type": "object", "example": { "frequency": "3.6 GHz", "cores": 8 } },
+          "offers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OfferInput" }
+          }
+        }
+      },
+      "Partner": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "64a9b2e...ef456" },
+          "name": { "type": "string", "example": "Amazon" },
+          "url": { "type": "string", "format": "uri", "example": "https://amazon.com" },
+          "affiliateInfo": {
+            "type": "object",
+            "properties": {
+              "commissionRate": { "type": "number", "example": 0.05 },
+              "conditions": { "type": "string", "example": "Commission 5%" }
+            }
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "PartnerInput": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "example": "Amazon" },
+          "url": { "type": "string", "format": "uri", "example": "https://amazon.com" },
+          "affiliateInfo": {
+            "type": "object",
+            "properties": {
+              "commissionRate": { "type": "number", "example": 0.05 },
+              "conditions": { "type": "string", "example": "Commission 5%" }
+            }
+          }
+        }
+      },
+      "SavedConfiguration": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "64aa3e2...def789" },
+          "user": { "type": "string", "example": "64a8f3f...abc123" },
+          "name": { "type": "string", "example": "Ma config gaming" },
+          "components": {
+            "type": "array",
+            "items": { "type": "string", "example": "64a8d3c...xyz789" }
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SavedConfigurationInput": {
+        "type": "object",
+        "required": ["name", "components"],
+        "properties": {
+          "name": { "type": "string", "example": "Ma config gaming" },
+          "components": {
+            "type": "array",
+            "items": { "type": "string", "example": "64a8d3c...xyz789" }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [{ "bearerAuth": [] }]
+}
