@@ -13,7 +13,7 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// ⚠️ Intercepteur de réponse : gestion des erreurs 401
+// Intercepteur de réponse : gestion des erreurs 401
 API.interceptors.response.use(
   (response) => response,
   (error) => {
