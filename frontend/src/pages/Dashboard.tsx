@@ -1,30 +1,17 @@
-import { useEffect, useState } from 'react';
-import API from '../services/api';
-import type { User } from '../types/index';
+import { useAuth } from '../contexts/AuthContext';
 
 function Dashboard() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    API.get<{ email: string; role: string }>('/api/auth/me')
-      .then((response) => {
-        setUser(response.data);
-      })
-      .catch((error) => {
-        console.error('Erreur lors de la récupération des informations utilisateur', error);
-      });
-  }, []);
-
-  if (!user) {
-    return <div>Chargement...</div>;
-  }
+  if (!user) return <p>Chargement...</p>;
 
   return (
     <div>
-      <h1>Tableau de bord</h1>
+      <h1>Dashboard</h1>
       <p>Email : {user.email}</p>
-      <p>Rôle : {user.role}</p>
+      <p>Admin : {user.isAdmin ? 'Oui' : 'Non'}</p>
     </div>
   );
 }
+
 export default Dashboard;
