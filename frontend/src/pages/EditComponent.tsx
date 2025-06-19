@@ -25,19 +25,28 @@ function EditComponent() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (!id) return;
-        API.get<Component>(`/components/${id}`)
-            .then((res) => {
-            setFormData(res.data);
+    if (!id) return;
+    
+    API.get<Component>(`/components/${id}`)
+        .then((res) => {
+            const component = res.data;
+            setFormData({
+                _id: component._id,
+                name: component.name,
+                type: component.type,
+                brand: component.brand,
+                price: component.price,
+                specs: component.specs || {}, 
+            });
             setIsLoading(false);
-            })
-            .catch((err) => {
+        })
+        .catch((err) => {
             console.error('Erreur chargement composant:', err);
             alert("Composant introuvable ou erreur serveur.");
             navigate('/components');
             setIsLoading(false);
         });
-    }, [id]);
+}, [id, navigate]);
 
     if (!user?.isAdmin) return <p>Accès refusé. Réservé aux administrateurs.</p>;
     if (isLoading) return <p>Chargement du composant...</p>;
