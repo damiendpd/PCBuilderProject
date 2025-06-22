@@ -2,6 +2,7 @@ import express from 'express';
 import SavedConfiguration from '../models/SavedConfiguration.js';
 import Component from '../models/Component.js';
 import { verifyToken } from '../middleware/auth.js';
+import { isAdmin } from '../middleware/isAdmin.js';
 
 const router = express.Router();
 

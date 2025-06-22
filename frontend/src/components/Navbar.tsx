@@ -1,4 +1,3 @@
-// src/components/Navbar.tsx
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -18,7 +17,11 @@ function Navbar() {
       <Link to="/components">Composants</Link> |{' '}
       <Link to="/partners">Partenaires</Link> |{' '}
       <Link to="/configurations">Configurations</Link> |{' '}
-      <Link to="/users">Utilisateurs</Link> |{' '}
+      {user?.isAdmin && (
+        <>
+          <Link to="/users">Utilisateurs</Link> |{' '}
+        </>
+      )}
 
       {/* Lien vers la page d'accueil */}
 
