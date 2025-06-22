@@ -18,6 +18,9 @@ function Navbar() {
       <Link to="/components">Composants</Link> |{' '}
       <Link to="/partners">Partenaires</Link> |{' '}
       <Link to="/configurations">Configurations</Link> |{' '}
+      <Link to="/users">Utilisateurs</Link> |{' '}
+
+      {/* Lien vers la page d'accueil */}
 
       {!user && (
         <Link to="/login">Connexion</Link>

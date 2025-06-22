@@ -127,4 +127,14 @@ router.put('/:id', verifyToken, async (req, res) => {
   }
 });
 
+// Route admin pour voir les configs d'un utilisateur spécifique
+router.get('/admin/:userId', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const configs = await SavedConfiguration.find({ user: req.params.userId }).populate('components');
+    res.status(200).json(configs);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur lors de la récupération', error: err.message });
+  }
+});
+
 export default router;
